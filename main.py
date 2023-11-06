@@ -57,7 +57,6 @@ woke_terminology_map = {0: 'invalid', 1: 'Man', 2: 'Woman', 3: 'Non-binary', 4: 
                         54: 'Translaki', 55: 'Third Gender', 56: 'X Gender', 57: 'Buê đuê', 58: 'Enchaquirado',
                         59: 'Muxe', 60: 'Tida Wena', 61: 'Omeguit'}
 
-s = invert(woke_terminology_map)
 sexual_pos_dict = {
     1: "Top",
     2: "Bottom",
@@ -96,8 +95,6 @@ looking_for_dict = {
     7: "Hookups",
 }
 
-looking_for_dict_inv = invert(looking_for_dict)
-
 ethnicity_dict = {
     1: "Asian",
     2: "Black",
@@ -125,8 +122,6 @@ tribes_dict = {
     12: "Twink",
     13: "Sober"
 }
-
-tribes_dict_inv = invert(tribes_dict)
 
 report_reason_dict = {
     1: "Offensive Profile Image",
@@ -190,6 +185,7 @@ vaccine_dict = {
     3: "Meningitis"
 }
 
+woke_terminology_map_inv = invert(woke_terminology_map)
 sexual_pos_dict_inv = invert(sexual_pos_dict)
 looking_for_dict_inv = invert(looking_for_dict)
 tribes_dict_inv = invert(tribes_dict)
