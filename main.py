@@ -366,6 +366,4 @@ headers = {
         version, build_number, client_type, android_number, phone_model, manufacturer)),
 }
 
-rd = red_dot()
-
 client.close()
