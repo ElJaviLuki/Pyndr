@@ -338,9 +338,25 @@ def getCascadePage(lat, lon, online_only=False, photo_only=False, face_only=Fals
 
     return result
 
+# ALBUMS TODO: Implement missing endpoints
+def albums_1(album_id, content_id):
+    with httpx.Client() as client:
+        response = client.get(url=("https://grindr.mobi/v1/albums/%s/content/%s/poster" % (album_id, content_id)), headers=headers)
+        result = response.json()
+
+    return result
+
+def red_dot():
+    with httpx.Client() as client:
+        client.put(url=("https://grindr.mobi/v1/albums/red-dot"), headers=headers)
+
+def getMyAlbums(): # Get my albums
+    with httpx.Client() as client:
+        response = client.get(url=("https://grindr.mobi/v1/albums/"), headers=headers)
+        result = response.json()
+    return result
 
 session = login(*load_credentials())
-
 headers = {
     # The commented headers are not required for a good response.
     # "Accept": "application/json",
@@ -357,4 +373,6 @@ headers = {
         version, build_number, client_type, android_number, phone_model, manufacturer)),
 }
 
-print(getCascadePage(*location_to_lat_lon("Paris, France")))
+rd = red_dot()
+
+print()
