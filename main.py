@@ -346,6 +346,18 @@ def get_my_albums(): # Get my albums
     result = response.json()
     return result
 
+# VIEWS SERVICE:
+def eyeball():
+    response = client.get(url=("https://grindr.mobi/v6/views/eyeball"), headers=headers)
+    result = response.json()
+    return result
+
+def list_views():
+    response = client.get(url=("https://grindr.mobi/v6/views/list"), headers=headers)
+    result = response.json()
+    return result
+
+# CLIENT
 client = httpx.Client()
 session = login(*load_credentials())
 headers = {
