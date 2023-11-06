@@ -265,20 +265,19 @@ def parse_profile(profile):
 # Replace with your desired location name
 def login(email, password):
     global auth_token
-    with httpx.Client() as client:
-        response = client.post(url="https://grindr.mobi/v3/sessions", headers={
-            # Minimal Headers
-            "L-Device-Info": ("%s;%s;%s;%s;%sx%s;%s" % (
-                android_id, channel, abi_type, total_mem_bytes, sc_height, sc_width, advertising_id)),
-            "User-Agent": ("grindr3/%s;%s;%s;Android %s;%s;%s" % (
-                version, build_number, client_type, android_number, phone_model, manufacturer))
-        }, json={"email": email, "password": password, "token": ""})
+    response = client.post(url="https://grindr.mobi/v3/sessions", headers={
+        # Minimal Headers
+        "L-Device-Info": ("%s;%s;%s;%s;%sx%s;%s" % (
+            android_id, channel, abi_type, total_mem_bytes, sc_height, sc_width, advertising_id)),
+        "User-Agent": ("grindr3/%s;%s;%s;Android %s;%s;%s" % (
+            version, build_number, client_type, android_number, phone_model, manufacturer))
+    }, json={"email": email, "password": password, "token": ""})
 
-        response = response.json()
-        if 'message' in response:
-            # Message types: ACCOUNT_BANNED
-            print(response['message'])
-        return response
+    response = response.json()
+    if 'message' in response:
+        # Message types: ACCOUNT_BANNED
+        print(response['message'])
+    return response
 
 def getCascadePage(lat, lon, online_only=False, photo_only=False, face_only=False, not_recently_chatted=False,
                    has_album=False, age_min=0, age_max=0, height_min=0, height_max=0, weight_min=0, weight_max=0,
@@ -328,30 +327,28 @@ def getCascadePage(lat, lon, online_only=False, photo_only=False, face_only=Fals
     if genders is not None and genders:
         params["genders"] = comma_join(genders)
 
-    with httpx.Client() as client:
-        response = client.get(url="https://grindr.mobi/v1/cascade", headers=headers, params=params)
-        result = response.json()
+    response = client.get(url="https://grindr.mobi/v1/cascade", headers=headers, params=params)
+    result = response.json()
 
     return result
 
 # ALBUMS TODO: Implement missing endpoints
 def albums_1(album_id, content_id):
-    with httpx.Client() as client:
-        response = client.get(url=("https://grindr.mobi/v1/albums/%s/content/%s/poster" % (album_id, content_id)), headers=headers)
-        result = response.json()
+    response = client.get(url=("https://grindr.mobi/v1/albums/%s/content/%s/poster" % (album_id, content_id)),
+                          headers=headers)
+    result = response.json()
 
     return result
 
 def red_dot():
-    with httpx.Client() as client:
-        client.put(url=("https://grindr.mobi/v1/albums/red-dot"), headers=headers)
+    client.put(url=("https://grindr.mobi/v1/albums/red-dot"), headers=headers)
 
 def getMyAlbums(): # Get my albums
-    with httpx.Client() as client:
-        response = client.get(url=("https://grindr.mobi/v1/albums/"), headers=headers)
-        result = response.json()
+    response = client.get(url=("https://grindr.mobi/v1/albums/"), headers=headers)
+    result = response.json()
     return result
 
+client = httpx.Client()
 session = login(*load_credentials())
 headers = {
     # The commented headers are not required for a good response.
@@ -371,4 +368,4 @@ headers = {
 
 rd = red_dot()
 
-print()
+client.close()
