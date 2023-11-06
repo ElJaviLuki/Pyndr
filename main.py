@@ -227,8 +227,6 @@ def location_to_lat_lon(location_name):
     else:
         return None
 
-
-# Imprime el diccionario cargado desde el archivo JSON
 def parse_profile(profile):
     if profile is None or profile['type'] == 'advert_v1':
         return profile
@@ -343,7 +341,7 @@ def albums_1(album_id, content_id):
 def red_dot():
     client.put(url=("https://grindr.mobi/v1/albums/red-dot"), headers=headers)
 
-def getMyAlbums(): # Get my albums
+def get_my_albums(): # Get my albums
     response = client.get(url=("https://grindr.mobi/v1/albums/"), headers=headers)
     result = response.json()
     return result
