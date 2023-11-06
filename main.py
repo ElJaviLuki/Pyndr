@@ -346,7 +346,7 @@ def get_my_albums(): # Get my albums
     result = response.json()
     return result
 
-# VIEWS SERVICE:
+# VIEWS SERVICE (full implemented)
 def eyeball():
     response = client.get(url=("https://grindr.mobi/v6/views/eyeball"), headers=headers)
     result = response.json()
@@ -356,6 +356,38 @@ def list_views():
     response = client.get(url=("https://grindr.mobi/v6/views/list"), headers=headers)
     result = response.json()
     return result
+
+# TAP INTERACTIONS SERVICE (full implemented)
+def get_sent_taps():
+    response = client.get(url=("https://grindr.mobi/v1/interactions/taps/sent"), headers=headers)
+    result = response.json()
+    '''{
+    boolean deleted;
+    Long readOn;
+    long receiverId;
+    long senderId;
+    long sentOn;
+    int tapType;
+    }'''
+
+    return result
+
+def get_received_taps():
+    response = client.get(url=("https://grindr.mobi/v1/interactions/taps/received"), headers=headers)
+    result = response.json()
+    return result
+
+def add_tap(recipient_id, tap_type):
+    response = client.post(url=("https://grindr.mobi/v1/interactions/taps/add"), headers=headers, json={
+        "recipientId": recipient_id,
+        "tapType": tap_type
+    })
+    result = response.json()
+    return result
+
+def delete_received_tap(senderId):
+    response = client.delete(url=("https://grindr.mobi/v1/interactions/taps/received/%s" % senderId), headers=headers)
+    return response
 
 # CLIENT
 client = httpx.Client()
