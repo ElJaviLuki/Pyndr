@@ -5,6 +5,10 @@ import pygeohash as pgh
 from geopy import Photon
 import random
 import uuid
+from PIL import Image
+from io import BytesIO
+import tkinter as tk
+from tkinter import ttk
 
 android_id = random.randint(10 ** (16 - 1), (10 ** 16) - 1)
 # NOTE: 16 zeros ID is banned
@@ -43,6 +47,9 @@ def grindr_geohash(lat, lon):
 
 def invert(dictionary):
     return {v: k for k, v in dictionary.items()}
+
+def normalize_id(id):
+    return id if isinstance(id, str) else str(id)
 
 woke_terminology_map = {0: 'invalid', 1: 'Man', 2: 'Woman', 3: 'Non-binary', 4: 'Cis Man', 5: 'Trans Man',
                         6: 'Cis Woman', 7: 'Trans Woman', 8: 'Non-Conforming', 9: 'Genderqueer', 10: 'Agender',
@@ -379,7 +386,7 @@ def get_received_taps():
 
 def add_tap(recipient_id, tap_type):
     response = client.post(url=("https://grindr.mobi/v1/interactions/taps/add"), headers=headers, json={
-        "recipientId": recipient_id,
+        "recipientId": normalize_id(recipient_id),
         "tapType": tap_type
     })
     result = response.json()
@@ -388,6 +395,97 @@ def add_tap(recipient_id, tap_type):
 def delete_received_tap(senderId):
     response = client.delete(url=("https://grindr.mobi/v1/interactions/taps/received/%s" % senderId), headers=headers)
     return response
+
+# PROFILE REST SERVICE
+def get_muted_profiles():
+    response = client.get(url=("https://grindr.mobi/v4/me/muted-profiles"), headers=headers)
+    result = response.json()
+    return result
+
+def get_my_profile():
+    response = client.get(url="https://grindr.mobi/v4/me/profile", headers=headers)
+    result = response.json()
+    return result
+
+def get_profile(id):
+    response = client.get(url=("https://grindr.mobi/v4/profiles/%s" % id), headers=headers)
+    result = response.json()
+    return result
+
+def get_profiles(ids):
+    response = client.post(url="https://grindr.mobi/v3/profiles", headers=headers, json={
+        'targetProfileIds': [normalize_id(id) for id in ids]
+    })
+    result = response.json()
+    return result
+
+def report_viewed_profile(profile_id):
+    response = client.post(url=("https://grindr.mobi/v4/views/%s" % profile_id), headers=headers)
+    result = response.json()
+    return result
+
+def add_favorite(id):
+    response = client.post(url=("https://grindr.mobi/v3/me/favorites/%s" % id), headers=headers)
+    result = response.json()
+    return result
+
+def delete_favorite(id):
+    response = client.delete(url=("https://grindr.mobi/v3/me/favorites/%s" % id), headers=headers)
+    result = response.json()
+    return result
+
+def send_reachable_profiles(ids):
+    response = client.post(url="https://grindr.mobi/v4/profiles/reachable", headers=headers, json={
+        "profileIds": [normalize_id(id) for id in ids]
+    })
+    result = response.json()
+    return result
+
+'''
+def update_profile(*, about_me: str, nsfw: int, age: int,
+                   approximateDistance: bool, body_type: int, display_name: str, distance: int, ethnicity: int,
+                   genders: list[int], tribes: list[int], tags: list[str],
+                   height_cms: int, hiv_status: int, ):
+    response = client.put(url="https://grindr.mobi/v3.1/me/profile", headers=headers, json={
+        "aboutMe": about_me,
+        "nsfw": nsfw,
+        "age": age,
+        "approximateDistance": approximateDistance,
+        "bodyType": body_type,
+        "displayName": display_name,
+        "distance": distance,
+        "ethnicity": ethnicity,
+        "genders": genders,
+        "grindrTribes": tribes,
+        "hashtags": tags,
+        "height":,
+        "hivStatus":,
+        "identity":,
+        "lastTestedDate":,
+        "lookingFor":,
+        "meetAt":,
+        "profileImageMediaHash":,
+        "profileTags":,
+        "pronouns":,
+        "relationshipStatus":,
+        "sexualPosition":,
+        "showAge":,
+        "showDistance":,
+        "socialNetworks":,
+        "vaccines":,
+        "weight":,
+    })
+    result = response.json()
+    return result
+'''
+
+def get_image(id, resolution="2048x2048"):
+    response = client.get(url=("https://cdns.grindr.com/images/profile/%s/%s" % (resolution, id)), headers=headers)
+
+    if response.status_code == 200:
+        return Image.open(BytesIO(response.content))
+    else:
+        print(f"Could not download the image. Status code: {response.status_code}")
 
 # CLIENT
 client = httpx.Client()
